@@ -50,7 +50,7 @@
 
 ## 🚀 Live Demo <a name="live-demo"></a>
 
->
+> No live demo yet
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -89,7 +89,7 @@ To run the project, execute the following command:
 
 > In visual studio code open terminal then write "npm start" after on your browser open "http://localhost:3000".
 
-## 👥 Authors <a name="authors"></a>
+## 👥 Author <a name="author"></a>
 
 👤 **Oscar Deus**
 
@@ -125,6 +125,6 @@ Feel free to check the [issues page](https://github.com/Oscah01/book-store/issue
 
 ## 📝 License <a name="license"></a>
 
-This project is [MIT](LICENSE) licensed.
+This project is [MIT](./LICENSE) licensed.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
