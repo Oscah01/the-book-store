@@ -1,26 +1,19 @@
-import { useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import Book from './components/Book';
-import Categories from './components/Categories';
-import Navbar from './components/Navbar';
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+
+import Books from './components/books';
+import Categories from './components/categories';
+import Layout from './components/layout';
 
 function App() {
-  const bookstore = [
-    {
-      id: 1,
-      title: 'The Lord of the Rings',
-      author: 'J. R. R.Tolkien',
-    },
-  ];
-  const [books, setBooks] = useState(bookstore);
   return (
-    <BrowserRouter>
-      <Navbar />
-      <Routes>
-        <Route exact path="/" element={<Book books={books} setBooks={setBooks} />} />
-        <Route exact path="/catagories" element={<Categories />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route path="/" element={<Books />} />
+        <Route path="categories" element={<Categories />} />
+        <Route path="*" element={<h1>404 Not Found</h1>} />
+      </Route>
+    </Routes>
   );
 }
 
