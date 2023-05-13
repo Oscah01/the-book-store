@@ -1,111 +1,72 @@
-/* eslint-disable no-param-reassign */
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
-import API_URL from "../../globals";
-
-export const postBook = createAsyncThunk(
-  "books/postBook",
-  async (bookData, thunkAPI) => {
-    try {
-      const res = await axios.post(`${API_URL}/books`, bookData);
-
-      return res.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error?.data?.message || "Something went wrong!"
-      );
-    }
-  }
-);
-
-export const getBooks = createAsyncThunk(
-  "books/getBooks",
-  async (_, thunkAPI) => {
-    try {
-      const res = await axios(`${API_URL}/books`);
-      return res.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error?.data?.message || "Something went wrong!"
-      );
-    }
-  }
-);
-
-export const deleteBook = createAsyncThunk(
-  "books/deleteBook",
-  async (id, thunkAPI) => {
-    try {
-      const res = await axios.delete(`${API_URL}/books/${id}`);
-
-      return res.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error?.data?.message || "Something went wrong!"
-      );
-    }
-  }
-);
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getBooks, storeBook, deleteBook } from '../../api';
 
 const initialState = {
-  isLoading: false,
   books: [],
+  isLoading: false,
 };
 
-const booksSlice = createSlice({
-  name: "books",
+export const fetchBooks = createAsyncThunk('books/fetchBooks', async () => {
+  const response = await getBooks();
+  return response;
+});
+
+export const addBook = createAsyncThunk('books/addBook', async (book) => {
+  const response = await storeBook(book);
+  return response;
+});
+
+export const removeBook = createAsyncThunk('books/removeBook', async (id) => {
+  await deleteBook(id);
+  return id;
+});
+
+export const booksSlice = createSlice({
+  name: 'books',
   initialState,
   reducers: {
-    addBook: (state, actions) => {
-      const bookData = actions.payload;
-      state.books.push(bookData);
+    addBookUI: (state, action) => {
+      const newState = { ...state };
+      const newBook = {
+        ...action.payload,
+        cartegory: 'Category',
+      };
+      newState.books = [...newState.books, newBook];
+      return newState;
     },
-
-    removeBook: (state, actions) => {
-      const idOfBookToRemove = actions.payload;
-      // eslint-disable-next-line no-param-reassign
-      state.books = state.books.filter(
-        (book) => book.item_id !== idOfBookToRemove
-      );
+    removeBookUI: (state, action) => {
+      const newState = { ...state };
+      const targetBookId = action.payload;
+      newState.books = newState.books.filter((book) => book.id !== targetBookId);
+      return newState;
     },
   },
   extraReducers: (builder) => {
-    // posting a book
     builder
-      .addCase(postBook.pending, (state) => {
-        state.isLoading = true;
+      .addCase(fetchBooks.pending, (state) => {
+        const newState = { ...state };
+        newState.isLoading = true;
+        return newState;
       })
-      .addCase(postBook.fulfilled, (state) => {
-        state.isLoading = false;
+      .addCase(fetchBooks.fulfilled, (state, action) => {
+        const newState = { ...state };
+        newState.isLoading = false;
+        newState.books = action.payload;
+        return newState;
       })
-      .addCase(postBook.rejected, (state) => {
-        state.isLoading = false;
-      });
-
-    // get books
-    builder
-      .addCase(getBooks.pending, (state) => {
-        state.isLoading = true;
+      .addCase(addBook.fulfilled, (state, action) => {
+        const newState = { ...state };
+        newState.books.push(action.payload);
+        return newState;
       })
-      .addCase(getBooks.fulfilled, (state, action) => {
-        state.isLoading = false;
-        const resObject = action.payload;
-
-        const newBooksArr = [];
-        // eslint-disable-next-line no-restricted-syntax, guard-for-in
-        for (const id in resObject) {
-          const bookObj = resObject[id][0];
-          bookObj.item_id = id;
-          newBooksArr.push(bookObj);
-        }
-
-        state.books = newBooksArr;
-      })
-      .addCase(getBooks.rejected, (state) => {
-        state.isLoading = false;
+      .addCase(removeBook.fulfilled, (state, action) => {
+        const newState = { ...state };
+        newState.books = newState.books.filter((book) => book.item_id !== action.payload);
+        return newState;
       });
   },
 });
 
-export const booksActions = booksSlice.actions;
+export const { addBookUI, removeBookUI } = booksSlice.actions;
+
 export default booksSlice.reducer;
