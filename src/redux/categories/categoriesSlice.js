@@ -1,18 +1,34 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = { status: '' };
+const initialState = {
+  categories: [],
+  status: '',
+};
 
-const categoriesSlice = createSlice({
+export const categoriesSlice = createSlice({
   name: 'categories',
   initialState,
   reducers: {
     checkStatus: (state) => {
       const newState = { ...state };
-      newState.status = 'Under Construction';
+      if (newState.categories.length > 0) {
+        newState.status = 'Categories Available!';
+      }
+      newState.status = 'Under construction!';
+
+      return newState;
+    },
+    bookOrigin: (state, action) => {
+      const newState = { ...state };
+      const country = action.payload;
+
+      newState.categories = newState.categories.filter((cartegory) => cartegory.name !== country);
+
       return newState;
     },
   },
 });
 
-export const { checkStatus } = categoriesSlice.actions;
+export const { checkStatus, bookOrigin } = categoriesSlice.actions;
+
 export default categoriesSlice.reducer;
