@@ -1,33 +1,66 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { v4 as uuidv4 } from 'uuid';
-import { addBook } from '../redux/Books/booksSlice';
-import styles from './styles/Form.module.css';
+import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { v4 as uuidv4 } from "uuid";
+import { booksActions, postBook } from "../redux/books/booksSlice";
 
 function Form() {
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
   const dispatch = useDispatch();
 
-  const handleAddBook = () => {
-    const newBook = {
+  const titleChangeHandler = (e) => {
+    setTitle(e.target.value);
+  };
+
+  const authorChangeHandler = (e) => {
+    setAuthor(e.target.value);
+  };
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+
+    // submit data
+    if (!title.trim() || !author.trim()) return;
+
+    const bookData = {
       item_id: uuidv4(),
       title,
       author,
-      category: 'Action',
+      category: "Fiction",
     };
-    dispatch(addBook(newBook));
-    setTitle('');
-    setAuthor('');
-  };
 
+    // Adding book to state
+    dispatch(booksActions.addBook(bookData));
+    dispatch(postBook(bookData));
+
+    // Empty form inputs
+    setTitle("");
+    setAuthor("");
+  };
   return (
-    <div>
-      <h2>ADD NEW BOOK</h2>
-      <form className={styles.form_container}>
-        <input className={styles.input_1} type="text" placeholder="Book title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-        <input className={styles.input_2} type="text" placeholder="Author" value={author} onChange={(e) => setAuthor(e.target.value)} required />
-        <button className={styles.addBook_btn} type="button" onClick={handleAddBook}>Add Book</button>
+    <div className="form-wrapper row">
+      <form onSubmit={submitHandler} className="form">
+        <input
+          type="text"
+          name="title"
+          value={title}
+          aria-label="Book title input"
+          placeholder="Book Title"
+          className="title-input"
+          onChange={titleChangeHandler}
+        />
+        <input
+          type="text"
+          name="author"
+          value={author}
+          aria-label="Book author input"
+          placeholder="Author"
+          className="author-input"
+          onChange={authorChangeHandler}
+        />
+        <button type="submit" className="submit-button">
+          Submit
+        </button>
       </form>
     </div>
   );

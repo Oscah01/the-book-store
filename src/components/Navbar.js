@@ -1,30 +1,29 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import styles from './styles/Navbar.module.css';
-import user from './image/user.svg';
+import React from "react";
+import { NavLink } from "react-router-dom";
 
-const Navbar = () => (
-  <div className={styles.nav_container}>
-    <nav>
-      <h1>Bookstore CMS</h1>
-
-      <ul>
-        <li className={styles.list}>
-          <Link className={styles.link} to="/">BOOKS</Link>
+function Navbar() {
+  return (
+    <nav className="nav">
+      <ul className="nav-links">
+        <li className="nav-link">
+          <NavLink
+            className={(linkData) => (linkData.isActive ? "active-link" : "")}
+            to="/"
+          >
+            Books
+          </NavLink>
         </li>
-
-        <li className={styles.list}>
-          <Link className={styles.link} to="/categories">CATEGORIES</Link>
+        <li className="nav-link">
+          <NavLink
+            className={(linkData) => (linkData.isActive ? "active-link" : "")}
+            to="/categories"
+          >
+            Categories
+          </NavLink>
         </li>
       </ul>
-
-      <div className={styles.user}>
-        <div className={styles.user_min}>
-          <img src={user} alt="user-icon" />
-        </div>
-      </div>
     </nav>
-  </div>
-);
+  );
+}
 
 export default Navbar;

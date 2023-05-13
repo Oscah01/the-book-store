@@ -1,57 +1,54 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useDispatch } from 'react-redux';
-import { removeBook } from '../redux/Books/booksSlice';
-import styles from './styles/Books.module.css';
+import React from "react";
+import { useDispatch } from "react-redux";
+import { booksActions, deleteBook } from "../redux/books/booksSlice";
+import "react-circular-progressbar/dist/styles.css";
+import ProgressBar from "./ProgressBar/ProgressBar";
 
-function Book({
-  category, id, title, author,
-}) {
+function Book(props) {
   const dispatch = useDispatch();
+  const { title, author, id } = props;
 
-  const handleRemoveBook = () => {
-    dispatch(removeBook(id));
+  const removeBookHandler = (e) => {
+    // Dispatch remove book action
+    const { id } = e.target.dataset;
+    dispatch(booksActions.removeBook(id));
+
+    // Delete in the backend
+    dispatch(deleteBook(id));
   };
 
   return (
-    <li className={styles.book_container}>
-      <div className={styles.book}>
-        <p className={styles.category}>{category}</p>
-        <h2 className={styles.title}>{title}</h2>
-        <p className={styles.author}>{author}</p>
-        <div className={styles.book_btn}>
-          <button className={styles.btn} type="button">Comments</button>
-          <button className={styles.btn_remove} type="button" onClick={handleRemoveBook}>Remove</button>
-          <button className={styles.btn} type="button">Edit</button>
+    <div className="book-container">
+      <div className="book-details">
+        <h2 className="title">{title}</h2>
+        <span className="by">By {author}</span>
+        <div className="buttons-wrapper">
+          <button type="button" data-id={id} onClick={removeBookHandler}>
+            Remove
+          </button>
+          <button type="button" data-id={id}>
+            Edit
+          </button>
         </div>
       </div>
-      <div className={styles.contain}>
-        <div className={styles.ovalContainer}>
-          <div className={styles.Oval} />
+      <div className="completion-status">
+        <div style={{ width: 60, height: 60 }}>
+          <ProgressBar value={60} />
         </div>
-        <div>
-          <div className={styles.completion}>98%</div>
-          <div className={styles.completed}>completed</div>
-        </div>
-      </div>
-
-      <div className={styles.bar} />
-      <div className={styles.chapterContainer}>
-        <div className={styles.chapterone}>CURRENT CHAPTER</div>
-        <div className={styles.chapter}>Chapter Twelve</div>
-        <div className={styles.chapterBtn}>
-          <span className={styles.update}>UPDATE PROGRESS</span>
+        <div className="completion-data">
+          <span className="percentage">64%</span>
+          <span className="status">Completed</span>
         </div>
       </div>
-    </li>
+      <div className="chapter">
+        <span className="title">Current Chapter</span>
+        <h4 className="chapter-text">Chapter 17</h4>
+        <button type="button" className="progress-btn">
+          Update progress
+        </button>
+      </div>
+    </div>
   );
 }
-
-Book.propTypes = {
-  category: PropTypes.string.isRequired,
-  id: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  author: PropTypes.string.isRequired,
-};
 
 export default Book;
